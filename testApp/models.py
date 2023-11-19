@@ -1,20 +1,39 @@
+
+
+
 from django.db import models
 
-class Student(models.Model):
-    name = models.CharField(max_length=255)
-    email = models.EmailField()
-    age=models.models.IntegerField()
+class School(models.Model):
+    name = models.CharField(max_length=50)
+    location = models.CharField(max_length=100)
+    strenth=models.IntegerField()
     
-class Course(models.Model):
-    title = models.CharField(max_length=255)
-    instructor = models.ForeignKey(Student, on_delete=models.CASCADE)
-    fees= models.models.IntegerField()
-    couse_name=models.models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
 
-class Enrollment(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    total_fees=models.models.IntegerField()
+class Student(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    fees = models.IntegerField()
+    cls = models.IntegerField()
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='students')
+    
+    def __str__(self):
+        return self.name
+
+class Course(models.Model):
+    crs_id = models.IntegerField(primary_key=True)
+    students = models.ManyToManyField(Student, through='Enrolment', related_name='courses')
+    title = models.CharField(max_length=50)
+    strength = models.IntegerField()
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='courses')
+    
+    def __str__(self):
+        return self.title
+
+class Enrolment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='enrolments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrolments')
 
     
 
